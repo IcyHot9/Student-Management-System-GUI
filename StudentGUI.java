@@ -52,40 +52,53 @@ public class StudentGUI {
         btnShow.setBounds(120, 210, 120, 30);
         frame.add(btnShow);
 
-        btnAdd.addActionListener(e -> {
-            String id = txtId.getText();
-            String name = txtName.getText();
-            String dept = txtDept.getText();
-
-            manager.addStudent(new Student(id, name, dept));
-            JOptionPane.showMessageDialog(frame, "Student Added");
+        btnAdd.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                Student s = new Student(
+                        txtId.getText(),
+                        txtName.getText(),
+                        txtDept.getText()
+                );
+                manager.addStudent(s);
+                JOptionPane.showMessageDialog(frame, "Student Added");
+            }
         });
 
-        btnSearch.addActionListener(e -> {
-            Student s = manager.searchStudent(txtId.getText());
-            if (s != null) {
+        btnSearch.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                Student s = manager.searchStudent(txtId.getText());
+                if (s != null) {
+                    JOptionPane.showMessageDialog(frame,
+                            "Name: " + s.getName() +
+                            "\nDepartment: " + s.getDepartment());
+                } else {
+                    JOptionPane.showMessageDialog(frame, "Student Not Found");
+                }
+            }
+        });
+
+        btnDelete.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                if (manager.deleteStudent(txtId.getText())) {
+                    JOptionPane.showMessageDialog(frame, "Student Deleted");
+                } else {
+                    JOptionPane.showMessageDialog(frame, "Student Not Found");
+                }
+            }
+        });
+
+        btnShow.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                String result = "";
+                for (int i = 0; i < manager.getCount(); i++) {
+                    Student s = manager.getStudents()[i];
+                    result += s.getId() + " - " +
+                              s.getName() + " - " +
+                              s.getDepartment() + "\n";
+                }
                 JOptionPane.showMessageDialog(frame,
-                        "Name: " + s.getName() + "\nDepartment: " + s.getDepartment());
-            } else {
-                JOptionPane.showMessageDialog(frame, "Student Not Found");
+                        result.isEmpty() ? "No Students" : result);
             }
-        });
-
-        btnDelete.addActionListener(e -> {
-            boolean removed = manager.deleteStudent(txtId.getText());
-            if (removed) {
-                JOptionPane.showMessageDialog(frame, "Student Deleted");
-            } else {
-                JOptionPane.showMessageDialog(frame, "Student Not Found");
-            }
-        });
-
-        btnShow.addActionListener(e -> {
-            String result = "";
-            for (Student s : manager.getAllStudents()) {
-                result += s.getId() + " - " + s.getName() + " - " + s.getDepartment() + "\n";
-            }
-            JOptionPane.showMessageDialog(frame, result.isEmpty() ? "No Students" : result);
         });
 
         frame.setVisible(true);
