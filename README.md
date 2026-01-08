@@ -12,7 +12,7 @@ A simple GUI-based Java project created for GUI Lab Performance.
 - Java
 - Swing GUI
 - OOP Concepts
-- ArrayList
+- File I/O
 
 ## Course
 Object-Oriented Programming
