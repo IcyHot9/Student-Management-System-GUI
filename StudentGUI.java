@@ -12,7 +12,7 @@ public class StudentGUI {
         frame.setLayout(null);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-        JLabel lblId = new JLabel("Student ID:");
+        JLabel lblId = new JLabel("Student ID: ");
         lblId.setBounds(30, 30, 100, 25);
         frame.add(lblId);
 
@@ -20,7 +20,7 @@ public class StudentGUI {
         txtId.setBounds(150, 30, 180, 25);
         frame.add(txtId);
 
-        JLabel lblName = new JLabel("Name:");
+        JLabel lblName = new JLabel("Name: ");
         lblName.setBounds(30, 70, 100, 25);
         frame.add(lblName);
 
@@ -28,7 +28,7 @@ public class StudentGUI {
         txtName.setBounds(150, 70, 180, 25);
         frame.add(txtName);
 
-        JLabel lblDept = new JLabel("Department:");
+        JLabel lblDept = new JLabel("Department: ");
         lblDept.setBounds(30, 110, 100, 25);
         frame.add(lblDept);
 
@@ -69,8 +69,8 @@ public class StudentGUI {
                 Student s = manager.searchStudent(txtId.getText());
                 if (s != null) {
                     JOptionPane.showMessageDialog(frame,
-                            "Name: " + s.getName() +
-                            "\nDepartment: " + s.getDepartment());
+                            "Name: " + s.getName()
+                            + "\nDepartment: " + s.getDepartment());
                 } else {
                     JOptionPane.showMessageDialog(frame, "Student Not Found");
                 }
@@ -87,19 +87,22 @@ public class StudentGUI {
             }
         });
 
-        btnShow.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                String result = "";
-                for (int i = 0; i < manager.getCount(); i++) {
-                    Student s = manager.getStudents()[i];
-                    result += s.getId() + " - " +
-                              s.getName() + " - " +
-                              s.getDepartment() + "\n";
-                }
-                JOptionPane.showMessageDialog(frame,
-                        result.isEmpty() ? "No Students" : result);
-            }
-        });
+		btnShow.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+			String result = "";
+			for (int i = 0; i < manager.getCount(); i++) {
+				Student s = manager.getStudents()[i];
+				result += s.getId() + " - "
+					   + s.getName() + " - "
+                       + s.getDepartment() + "\n";
+			}
+
+			JOptionPane.showMessageDialog(
+                frame,
+                result.isEmpty() ? "No Students" : result
+        );
+    }
+});
 
         frame.setVisible(true);
     }
