@@ -1,83 +1,103 @@
 import java.io.*;
+import java.util.ArrayList;
+import java.util.List;
 
-public class StudentManager {
-	
-	private Student[] students = new Student[50];
-	private int count = 0;
-	private final String FILE_NAME = "students.txt";
-	
-	public StudentManager() {
-		loadFromFile();
-	}
-	
-	public void addStudent(Student s) {
-		if (count < students.length) {
-			students[count] = s;
-			count++;
-			saveToFile();
-		}
-	}
-	
-	public Student searchStudent(String id) {
-		for (int i = 0; i < count; i++) {
-			if (students[i].getId().equals(id)) {
-				return students[i];
-			}
-		}
-		return null;
-	}
-	
-	public boolean deleteStudent(String id) {
-		for (int i = 0; i<count; i++) {
-			if(students[i].getId().equals(id)) {
-				for(int j = i; j<count - 1; j++) {
-					students[j] = students[j + 1];
-				}
-				students[count-1] = null;
-				count--;
-				saveToFile();
-				return true;
-			}
-		}
-		return false;
-	}
-	
-	public Student[] getStudents() {
-		return students;
-	}
-	
-	public int getCount() {
-		return count;
-	}
-	
-	
-	private void saveToFile() {
-		try {
-			BufferedWriter bw = new BufferedWriter(new FileWriter(FILE_NAME));
-			for (int i = 0; i<count; i++) {
-				bw.write(students[i].getId() + ","+
-						students[i].getId() + "," +
-						students[i].getDepartment());
-				bw.newLine();
-			}
-			bw.close();
-		} catch (IOException e) {
-			System.out.println("Error writing file");
-		}
-	}
+// Interface for Abstraction
+interface IStudentManager {
+    void add(Student s);
+    boolean update(String id, String n, String d, String c, int cr);
+    boolean delete(String id);
+    List<Student> getAllStudents();
+}
 
-	private void loadFromFile() {
-		try {
-			BufferedReader br = new BufferedReader(new FileReader(FILE_NAME));
-			String line;
-			while ((line = br.readLine()) != null){
-				String[] data = line.split(",");
-				students [count] = new Student(data[0], data[1], data[2]);
-				count++;
-		}
-			br.close();
-		} catch (IOException e) {
-		}
-	}
+public class StudentManager implements IStudentManager {
+    private List<Student> list;  // Encapsulation: private field
+    private final String FILE = "students.txt";
 
+    public StudentManager() {
+        list = new ArrayList<>();
+        load();  // Load from file on startup
+    }
+
+    @Override
+    public void add(Student s) { 
+        list.add(s); 
+        save(); 
+    }
+
+    // Polymorphism: method overloading
+    public Student find(String id) {
+        for (Student s : list) {
+            if (s.getId().equals(id)) return s;
+        }
+        return null;
+    }
+
+    // Polymorphism: method overloading (find by name)
+    public Student findByName(String name) {
+        for (Student s : list) {
+            if (s.getName().equalsIgnoreCase(name)) return s;
+        }
+        return null;
+    }
+
+    @Override
+    public boolean update(String id, String n, String d, String c, int cr) {
+        Student s = find(id);
+        if (s == null) return false;
+        
+        s.setName(n);
+        s.setDept(d);
+        s.setCourse(c);
+        s.setCredits(cr);
+        save(); 
+        return true;
+    }
+
+    @Override
+    public boolean delete(String id) {
+        Student s = find(id);
+        if (s != null) {
+            list.remove(s);
+            save();
+            return true;
+        }
+        return false;
+    }
+
+    public List<Student> getAllStudents() {
+        return new ArrayList<>(list);  // Return copy for encapsulation
+    }
+
+    // File I/O with proper Exception Handling
+    private void save() {
+        try (PrintWriter pw = new PrintWriter(FILE)) {
+            for (Student s : list) {
+                pw.println(s.getId() + "," + s.getName() + "," + 
+                          s.getDept() + "," + s.getCourse() + "," + s.getCredits());
+            }
+        } catch (IOException e) {
+            System.err.println("Error saving to file: " + e.getMessage());
+        }
+    }
+
+    private void load() {
+        File file = new File(FILE);
+        if (!file.exists()) return;
+        
+        try (BufferedReader br = new BufferedReader(new FileReader(FILE))) {
+            String line;
+            while ((line = br.readLine()) != null) {
+                String[] parts = line.split(",");
+                if (parts.length == 5) {
+                    int credits = Integer.parseInt(parts[4]);
+                    list.add(new Student(parts[0], parts[1], parts[2], parts[3], credits));
+                }
+            }
+        } catch (IOException e) {
+            System.err.println("Error loading from file: " + e.getMessage());
+        } catch (NumberFormatException e) {
+            System.err.println("Error parsing credits from file: " + e.getMessage());
+        }
+    }
 }
