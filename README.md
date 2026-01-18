@@ -4,9 +4,13 @@ A simple GUI-based Java project created for GUI Lab Performance.
 
 ## Features
 - Add Student
-- Search Student
+- Update Student
 - Delete Student
+- Search Student
 - Show All Students
+- Add Courses with Credits
+- Calculate CGPA
+- Login System
 
 ## Technology
 - Java
@@ -17,3 +21,4 @@ A simple GUI-based Java project created for GUI Lab Performance.
 ## Course
 Object-Oriented Programming
 AIUB
+
