@@ -1,4 +1,3 @@
-// Abstract class for Abstraction
 abstract class Person {
     protected String id;
     protected String name;
@@ -8,14 +7,11 @@ abstract class Person {
         this.name = name;
     }
 
-    // Abstract method for Abstraction
     public abstract String getInfo();
 
-    // Encapsulation with getters
     public String getId() { return id; }
     public String getName() { return name; }
     
-    // Setter with validation (Exception Handling)
     public void setName(String name) {
         if (name == null || name.trim().isEmpty()) {
             throw new IllegalArgumentException("Name cannot be empty");
@@ -24,9 +20,8 @@ abstract class Person {
     }
 }
 
-// Student class with Inheritance
 class Student extends Person {
-    private String dept;    // Encapsulation: private fields
+    private String dept;
     private String course;
     private int credits;
 
@@ -34,16 +29,14 @@ class Student extends Person {
         super(id, name);
         this.dept = dept;
         this.course = course;
-        setCredits(credits); // Using setter for validation
+        setCredits(credits);
     }
 
-    // Implementing abstract method (Polymorphism)
     @Override
     public String getInfo() {
         return id + " | " + name + " | " + dept + " | " + course + " | " + credits;
     }
 
-    // Getters and Setters (Encapsulation)
     public String getDept() { return dept; }
     public void setDept(String dept) { this.dept = dept; }
     
@@ -52,7 +45,6 @@ class Student extends Person {
     
     public int getCredits() { return credits; }
     
-    // Setter with validation (Exception Handling)
     public void setCredits(int credits) {
         if (credits < 0 || credits > 200) {
             throw new IllegalArgumentException("Credits must be between 0 and 200");
