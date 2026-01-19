@@ -9,7 +9,6 @@ A simple GUI-based Java project created for GUI Lab Performance.
 - Search Student
 - Show All Students
 - Add Courses with Credits
-- Calculate CGPA
 - Login System
 
 ## Technology
