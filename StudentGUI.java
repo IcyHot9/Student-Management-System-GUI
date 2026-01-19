@@ -1,7 +1,6 @@
+import java.awt.*;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
-import java.awt.*;
-import java.util.List;
 
 public class StudentGUI {
 
@@ -11,7 +10,6 @@ public class StudentGUI {
     static CardLayout card = new CardLayout();
     static JPanel pages = new JPanel(card);
 
-    // COLORS and FONTS
     static Color bgMain = new Color(240,244,248);
     static Color sideBar = new Color(25,42,86);
     static Color cardBg = Color.WHITE;
@@ -24,7 +22,6 @@ public class StudentGUI {
         showLogin();
     }
 
-    // ================= LOGIN =================
     static void showLogin() {
         JFrame f = new JFrame("Admin Login");
         f.setSize(500,300);
@@ -71,7 +68,6 @@ public class StudentGUI {
         f.setVisible(true);
     }
 
-    // ================= MAIN SYSTEM =================
     static void showSystem() {
         JFrame f = new JFrame("Student Management System");
         f.setSize(1100,650);
@@ -80,7 +76,7 @@ public class StudentGUI {
         f.setLayout(new BorderLayout());
 
         JPanel menu = new JPanel();
-        menu.setLayout(new BoxLayout(menu, BoxLayout.Y_AXIS)); // Changed to BoxLayout for better spacing
+        menu.setLayout(new BoxLayout(menu, BoxLayout.Y_AXIS));
         menu.setBackground(sideBar);
         menu.setBorder(BorderFactory.createEmptyBorder(40,20,40,20));
 
@@ -89,13 +85,11 @@ public class StudentGUI {
         JButton del = button("Delete Student", new Color(231,76,60));
         JButton view = button("View Students", new Color(155,89,182));
         
-        // Make buttons fill the width
         add.setAlignmentX(Component.CENTER_ALIGNMENT);
         upd.setAlignmentX(Component.CENTER_ALIGNMENT);
         del.setAlignmentX(Component.CENTER_ALIGNMENT);
         view.setAlignmentX(Component.CENTER_ALIGNMENT);
         
-        // Set button sizes
         Dimension btnSize = new Dimension(180, 50);
         add.setPreferredSize(btnSize);
         add.setMaximumSize(btnSize);
@@ -138,7 +132,6 @@ public class StudentGUI {
         f.setVisible(true);
     }
 
-    // ================= ADD / UPDATE =================
     static JPanel formPage(String title, boolean isAdd) {
         JPanel bg = new JPanel(new BorderLayout());
         bg.setBackground(bgMain);
@@ -195,7 +188,6 @@ public class StudentGUI {
         return bg;
     }
 
-    // ================= DELETE =================
     static JPanel deletePage() {
         JPanel bg = new JPanel(new BorderLayout());
         bg.setBackground(bgMain);
@@ -225,29 +217,32 @@ public class StudentGUI {
         return bg;
     }
 
-    // ================= VIEW =================
     static JPanel viewPage() {
         JPanel bg = new JPanel(new BorderLayout(15,15));
         bg.setBackground(bgMain);
         bg.setBorder(BorderFactory.createEmptyBorder(20,20,20,20));
 
         String[] cols = {"ID","Name","Dept","Course","Credits"};
-        DefaultTableModel model = new DefaultTableModel(cols,0);
+        DefaultTableModel model = new DefaultTableModel(cols,0) {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false;
+            }
+        };
         JTable table = new JTable(model);
         table.setFont(new Font("Segoe UI",Font.PLAIN,15));
         table.setRowHeight(28);
 
-        JButton refresh = button("Refresh", new Color(52,152,219));
+       JButton refresh = button("Refresh", new Color(52,152,219));
         refresh.addActionListener(e->{
-            model.setRowCount(0);
-            List<Student> students = m.getAllStudents();
-            for(Student s : students){
-                String[] row = s.getInfo().split(" \\| ");
-                model.addRow(row);
+        model.setRowCount(0);
+        Student[] students = m.getAllStudents();
+        for(Student s : students){
+        String[] row = s.getInfo().split(" \\| ");
+        model.addRow(row);
             }
         });
 
-        // Initial load
         refresh.doClick();
 
         bg.add(new JScrollPane(table), BorderLayout.CENTER);
@@ -255,7 +250,6 @@ public class StudentGUI {
         return bg;
     }
 
-    // ================= HELPERS =================
     static void addRow(JPanel p, GridBagConstraints c, int y, String t, JComponent f){
         c.gridx=0;c.gridy=y;p.add(label(t),c);
         c.gridx=1;f.setPreferredSize(new Dimension(320,42));p.add(f,c);
@@ -291,7 +285,6 @@ public class StudentGUI {
         b.setBackground(color);
         b.setForeground(Color.WHITE);
         b.setFocusPainted(false);
-        // Removed the fixed preferred size to let layout manager handle it
         b.setBorder(BorderFactory.createEmptyBorder(10, 20, 10, 20));
         return b;
     }
