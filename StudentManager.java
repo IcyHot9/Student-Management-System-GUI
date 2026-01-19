@@ -1,42 +1,54 @@
 import java.io.*;
-import java.util.ArrayList;
-import java.util.List;
 
-// Interface for Abstraction
 interface IStudentManager {
     void add(Student s);
     boolean update(String id, String n, String d, String c, int cr);
     boolean delete(String id);
-    List<Student> getAllStudents();
+    Student[] getAllStudents();
 }
 
 public class StudentManager implements IStudentManager {
-    private List<Student> list;  // Encapsulation: private field
+    private Student[] list;
+    private int size;
+    private int capacity;
     private final String FILE = "students.txt";
 
     public StudentManager() {
-        list = new ArrayList<>();
-        load();  // Load from file on startup
+        capacity = 10;
+        list = new Student[capacity];
+        size = 0;
+        load();
+    }
+
+    private void resize() {
+        capacity = capacity * 2;
+        Student[] newList = new Student[capacity];
+        for (int i = 0; i < size; i++) {
+            newList[i] = list[i];
+        }
+        list = newList;
     }
 
     @Override
     public void add(Student s) { 
-        list.add(s); 
+        if (size == capacity) {
+            resize();
+        }
+        list[size] = s;
+        size++;
         save(); 
     }
 
-    // Polymorphism: method overloading
     public Student find(String id) {
-        for (Student s : list) {
-            if (s.getId().equals(id)) return s;
+        for (int i = 0; i < size; i++) {
+            if (list[i].getId().equals(id)) return list[i];
         }
         return null;
     }
 
-    // Polymorphism: method overloading (find by name)
     public Student findByName(String name) {
-        for (Student s : list) {
-            if (s.getName().equalsIgnoreCase(name)) return s;
+        for (int i = 0; i < size; i++) {
+            if (list[i].getName().equalsIgnoreCase(name)) return list[i];
         }
         return null;
     }
@@ -56,23 +68,40 @@ public class StudentManager implements IStudentManager {
 
     @Override
     public boolean delete(String id) {
-        Student s = find(id);
-        if (s != null) {
-            list.remove(s);
+        int index = -1;
+        
+        for (int i = 0; i < size; i++) {
+            if (list[i].getId().equals(id)) {
+                index = i;
+                break;
+            }
+        }
+        
+        if (index != -1) {
+            for (int i = index; i < size - 1; i++) {
+                list[i] = list[i + 1];
+            }
+            list[size - 1] = null;
+            size--;
             save();
             return true;
         }
         return false;
     }
 
-    public List<Student> getAllStudents() {
-        return new ArrayList<>(list);  // Return copy for encapsulation
+    @Override
+    public Student[] getAllStudents() {
+        Student[] result = new Student[size];
+        for (int i = 0; i < size; i++) {
+            result[i] = list[i];
+        }
+        return result;
     }
 
-    // File I/O with proper Exception Handling
     private void save() {
         try (PrintWriter pw = new PrintWriter(FILE)) {
-            for (Student s : list) {
+            for (int i = 0; i < size; i++) {
+                Student s = list[i];
                 pw.println(s.getId() + "," + s.getName() + "," + 
                           s.getDept() + "," + s.getCourse() + "," + s.getCredits());
             }
@@ -91,7 +120,7 @@ public class StudentManager implements IStudentManager {
                 String[] parts = line.split(",");
                 if (parts.length == 5) {
                     int credits = Integer.parseInt(parts[4]);
-                    list.add(new Student(parts[0], parts[1], parts[2], parts[3], credits));
+                    add(new Student(parts[0], parts[1], parts[2], parts[3], credits));
                 }
             }
         } catch (IOException e) {
